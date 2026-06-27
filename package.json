@@ -1,0 +1,31 @@
+{
+  "name": "study-buddy-finder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kere-mnma/study-buddy-finder.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/kere-mnma/study-buddy-finder/issues"
+  },
+  "homepage": "https://github.com/kere-mnma/study-buddy-finder#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mysql2": "^3.22.5"
+  },
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
+}
