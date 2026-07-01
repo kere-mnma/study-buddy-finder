@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile — StudyBuddy NCI</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <span class="nav-brand">StudyBuddy NCI</span>
+      <div class="nav-links">
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/search.html">Find a Buddy</a>
+        <a href="/profile.html" class="active">My Profile</a>
+        <button id="logout-btn" class="btn-nav">Logout</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2>My Profile</h2>
+
+      <div id="error-message" class="error-box" style="display: none"></div>
+      <div id="success-message" class="success-box" style="display: none"></div>
+
+      <form id="profile-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="full_name" disabled />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" disabled />
+        </div>
+        <div class="form-group">
+          <label>Course Name</label>
+          <input
+            type="text"
+            id="course"
+            placeholder="e.g. Higher Diploma in Computing"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Current Modules (comma separated)</label>
+          <input
+            type="text"
+            id="modules"
+            placeholder="e.g. Web Development, Databases, Project"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Study Location Preference</label>
+          <select id="study_location">
+            <option value="both">Both</option>
+            <option value="online">Online</option>
+            <option value="on-campus">On-campus</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea
+            id="bio"
+            rows="4"
+            placeholder="Tell other students a bit about yourself and your study goals..."
+          ></textarea>
+        </div>
+        <button type="submit" class="btn-primary full-width">
+          Save Profile
+        </button>
+      </form>
+    </div>
+
+    <script src="/js/profile.js"></script>
+  </body>
+</html>
