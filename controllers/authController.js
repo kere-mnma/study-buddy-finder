@@ -3,10 +3,10 @@ const db = require('../config/db');
 
 // Register a new user
 const register = (req, res) => {
-  const { full_name, email, course, password } = req.body;
+  const { full_name, email, course, password, security_question, security_answer } = req.body;
 
   // Validate all fields are filled
-  if (!full_name || !email || !course || !password) {
+  if (!full_name || !email || !course || !password || !security_question || !security_answer) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -28,17 +28,22 @@ const register = (req, res) => {
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) return res.status(500).json({ message: 'Server error' });
 
-      // Insert new user into database
-      const insertUser = 'INSERT INTO users (full_name, email, password_hash, course) VALUES (?, ?, ?, ?)';
-      db.query(insertUser, [full_name, email, hash, course], (err, result) => {
+      // Hash the security answer
+      bcrypt.hash(security_answer, 10, (err, answerHash) => {
         if (err) return res.status(500).json({ message: 'Server error' });
 
-        // Create empty profile for the new user
-        const insertProfile = 'INSERT INTO profiles (user_id) VALUES (?)';
-        db.query(insertProfile, [result.insertId], (err) => {
+        // Insert new user into database
+        const insertUser = 'INSERT INTO users (full_name, email, password_hash, course, security_question, security_answer_hash) VALUES (?, ?, ?, ?, ?, ?)';
+        db.query(insertUser, [full_name, email, hash, course, security_question, answerHash], (err, result) => {
           if (err) return res.status(500).json({ message: 'Server error' });
 
-          return res.status(201).json({ message: 'Registration successful. Please log in.' });
+          // Create empty profile for the new user
+          const insertProfile = 'INSERT INTO profiles (user_id) VALUES (?)';
+          db.query(insertProfile, [result.insertId], (err) => {
+            if (err) return res.status(500).json({ message: 'Server error' });
+
+            return res.status(201).json({ message: 'Registration successful. Please log in.' });
+          });
         });
       });
     });
