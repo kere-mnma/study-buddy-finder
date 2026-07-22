@@ -5,6 +5,7 @@ const {
   acceptRequest,
   declineRequest,
   getDashboard,
+  withdrawRequest,
 } = require("../controllers/connectionController");
 
 // Middleware to protect routes
@@ -26,5 +27,8 @@ router.put("/:id/accept", isAuthenticated, acceptRequest);
 
 // Decline a connection request
 router.put("/:id/decline", isAuthenticated, declineRequest);
+
+// Withdraw a sent connection request
+router.delete("/:id/withdraw", isAuthenticated, withdrawRequest);
 
 module.exports = router;

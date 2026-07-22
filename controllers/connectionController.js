@@ -93,6 +93,15 @@ const getDashboard = (req, res) => {
     WHERE connections.receiver_id = ? AND connections.status = "pending"
   `;
 
+  // Get pending sent requests
+  const sentQuery = `
+    SELECT connections.id, users.full_name, users.course, profiles.modules
+    FROM connections
+    JOIN users ON connections.receiver_id = users.id
+    JOIN profiles ON users.id = profiles.user_id
+    WHERE connections.sender_id = ? AND connections.status = "pending"
+  `;
+
   // Get confirmed buddies
   const confirmedQuery = `
     SELECT users.id, users.full_name, users.course, profiles.modules, profiles.study_location
@@ -111,12 +120,44 @@ const getDashboard = (req, res) => {
   db.query(pendingQuery, [userId], (err, pending) => {
     if (err) return res.status(500).json({ message: "Server error" });
 
-    db.query(confirmedQuery, [userId, userId, userId], (err, confirmed) => {
+    db.query(sentQuery, [userId], (err, sent) => {
       if (err) return res.status(500).json({ message: "Server error" });
 
-      return res.status(200).json({ pending, confirmed });
+      db.query(confirmedQuery, [userId, userId, userId], (err, confirmed) => {
+        if (err) return res.status(500).json({ message: "Server error" });
+
+        return res.status(200).json({ pending, sent, confirmed });
+      });
     });
   });
 };
 
-module.exports = { sendRequest, acceptRequest, declineRequest, getDashboard };
+// Withdraw a sent request
+const withdrawRequest = (req, res) => {
+  const userId = req.session.userId;
+  const connectionId = req.params.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorised. Please log in." });
+  }
+
+  const query =
+    'DELETE FROM connections WHERE id = ? AND sender_id = ? AND status = "pending"';
+  db.query(query, [connectionId, userId], (err, result) => {
+    if (err) return res.status(500).json({ message: "Server error" });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Connection request not found." });
+    }
+
+    return res.status(200).json({ message: "Request withdrawn." });
+  });
+};
+
+module.exports = {
+  sendRequest,
+  acceptRequest,
+  declineRequest,
+  getDashboard,
+  withdrawRequest,
+};
