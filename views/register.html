@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register — StudyBuddy NCI</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>StudyBuddy NCI</h1>
+      <h2>Create your account</h2>
+      <p>All fields are required.</p>
+
+      <div id="error-message" class="error-box" style="display: none"></div>
+      <div id="success-message" class="success-box" style="display: none"></div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            id="full_name"
+            placeholder="e.g. Ose Murphy"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>NCI Student Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="e.g. x00000000@student.ncirl.ie"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Course Name</label>
+          <input
+            type="text"
+            id="course"
+            placeholder="e.g. Higher Diploma in Computing"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Password (min. 8 characters)</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-primary full-width">
+          Create Account
+        </button>
+      </form>
+      <p class="form-footer">
+        Already registered? <a href="/login.html">Log in here</a>
+      </p>
+    </div>
+
+    <script src="/js/register.js"></script>
+  </body>
+</html>

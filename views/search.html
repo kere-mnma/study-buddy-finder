@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find a Study Buddy — StudyBuddy NCI</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <span class="nav-brand">StudyBuddy NCI</span>
+    <div class="nav-links">
+      <a href="/dashboard.html">Dashboard</a>
+      <a href="/search.html" class="active">Find a Buddy</a>
+      <a href="/profile.html">My Profile</a>
+      <button id="logout-btn" class="btn-nav">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Find a Study Buddy</h2>
+    <p>Search by module name or course keyword.</p>
+
+    <div class="search-row">
+      <input type="text" id="keyword" placeholder="e.g. Databases, Web Dev, Python..." />
+      <select id="location-filter">
+        <option value="all">All locations</option>
+        <option value="online">Online</option>
+        <option value="on-campus">On-campus</option>
+        <option value="both">Both</option>
+      </select>
+      <button id="search-btn" class="btn-primary">Search</button>
+    </div>
+
+    <div id="error-message" class="error-box" style="display:none;"></div>
+
+    <div id="search-results">
+      <p class="empty-msg">Enter a keyword above to find study buddies.</p>
+    </div>
+  </div>
+
+  <script src="/js/search.js"></script>
+</body>
+</html>
