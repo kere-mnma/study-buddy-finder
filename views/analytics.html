@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics — StudyBuddy NCI</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/theme.js"></script>
+  </head>
+  <body class="analytics-page">
+    <nav class="navbar">
+      <span class="nav-brand">StudyBuddy NCI</span>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation menu">☰</label>
+      <div class="nav-links">
+        <a href="/home.html">Home</a>
+        <a href="/search.html">Find a Buddy</a>
+        <a href="/profile.html">My Profile</a>
+        <a href="/analytics.html" class="active">Analytics</a>
+        <button id="logout-btn" class="btn-nav">Logout</button>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2>Analytics</h2>
+      <p>A summary of your study connections.</p>
+
+      <div class="stats-row stats-row-3">
+        <div class="stat-box">
+          <div class="stat-num" id="confirmed-buddies-count">0</div>
+          <div class="stat-label">Total Confirmed Study Buddies</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="requests-sent-count">0</div>
+          <div class="stat-label">Requests Sent</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="requests-received-count">0</div>
+          <div class="stat-label">Requests Received</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/analytics.js"></script>
+    <script src="/js/session-timer.js"></script>
+  </body>
+</html>
