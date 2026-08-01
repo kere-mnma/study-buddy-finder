@@ -37,8 +37,8 @@ document.getElementById('login-form').addEventListener('submit', async function(
     sessionStorage.setItem('userName', data.name);
     sessionStorage.setItem('userId', data.userId);
 
-    // Redirect to dashboard
-    window.location.href = '/dashboard.html';
+    // Redirect to home
+    window.location.href = '/home.html';
   } catch (err) {
     errorBox.textContent = 'Something went wrong. Please try again.';
     errorBox.style.display = 'block';

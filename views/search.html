@@ -5,41 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Find a Study Buddy — StudyBuddy NCI</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/theme.js"></script>
 </head>
-<body>
+<body class="search-page">
 
   <nav class="navbar">
     <span class="nav-brand">StudyBuddy NCI</span>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+    <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation menu">☰</label>
     <div class="nav-links">
-      <a href="/dashboard.html">Dashboard</a>
+      <a href="/home.html">Home</a>
       <a href="/search.html" class="active">Find a Buddy</a>
       <a href="/profile.html">My Profile</a>
+      <a href="/analytics.html">Analytics</a>
       <button id="logout-btn" class="btn-nav">Logout</button>
     </div>
   </nav>
 
   <div class="container">
     <h2>Find a Study Buddy</h2>
-    <p>Search by module name or course keyword.</p>
+    <p>Search by module name or course keyword, or browse everyone.</p>
 
-    <div class="search-row">
-      <input type="text" id="keyword" placeholder="e.g. Databases, Web Dev, Python..." />
-      <select id="location-filter">
-        <option value="all">All locations</option>
-        <option value="online">Online</option>
-        <option value="on-campus">On-campus</option>
-        <option value="both">Both</option>
-      </select>
-      <button id="search-btn" class="btn-primary">Search</button>
+    <div class="tab-row">
+      <button id="tab-search" class="tab-btn active">Search by Keyword</button>
+      <button id="tab-browse" class="tab-btn">Browse All Students</button>
     </div>
 
-    <div id="error-message" class="error-box" style="display:none;"></div>
+    <div id="search-view">
+      <div class="search-row">
+        <input type="text" id="keyword" placeholder="e.g. Databases, Web Dev, Python..." />
+        <select id="location-filter">
+          <option value="all">All locations</option>
+          <option value="online">Online</option>
+          <option value="on-campus">On-campus</option>
+          <option value="both">Both</option>
+        </select>
+        <button id="search-btn" class="btn-primary">Search</button>
+      </div>
 
-    <div id="search-results">
-      <p class="empty-msg">Enter a keyword above to find study buddies.</p>
+      <div id="error-message" class="error-box" style="display:none;"></div>
+
+      <div id="search-results">
+        <p class="empty-msg">Enter a keyword above to find study buddies.</p>
+      </div>
+    </div>
+
+    <div id="browse-view" style="display:none;">
+      <div id="browse-results">
+        <p class="empty-msg">Loading students...</p>
+      </div>
+
+      <div class="pagination-row">
+        <button id="prev-page" class="btn-page">Previous</button>
+        <span id="page-info" class="page-info"></span>
+        <button id="next-page" class="btn-page">Next</button>
+      </div>
     </div>
   </div>
 
   <script src="/js/search.js"></script>
+  <script src="/js/session-timer.js"></script>
 </body>
 </html>
