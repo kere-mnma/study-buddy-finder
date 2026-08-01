@@ -9,6 +9,10 @@ const sendRequest = (req, res) => {
     return res.status(401).json({ message: "Unauthorised. Please log in." });
   }
 
+  if (!receiverId) {
+    return res.status(400).json({ message: "A receiver is required." });
+  }
+
   // Check for duplicate request
   const checkDuplicate =
     'SELECT * FROM connections WHERE sender_id = ? AND receiver_id = ? AND status = "pending"';
@@ -86,16 +90,25 @@ const getDashboard = (req, res) => {
 
   // Get pending incoming requests
   const pendingQuery = `
-    SELECT connections.id, users.full_name, users.course, profiles.modules
+    SELECT connections.id, users.full_name, users.course, profiles.modules, profiles.profile_picture
     FROM connections
     JOIN users ON connections.sender_id = users.id
     JOIN profiles ON users.id = profiles.user_id
     WHERE connections.receiver_id = ? AND connections.status = "pending"
   `;
 
+  // Get pending sent requests
+  const sentQuery = `
+    SELECT connections.id, users.full_name, users.course, profiles.modules, profiles.profile_picture
+    FROM connections
+    JOIN users ON connections.receiver_id = users.id
+    JOIN profiles ON users.id = profiles.user_id
+    WHERE connections.sender_id = ? AND connections.status = "pending"
+  `;
+
   // Get confirmed buddies
   const confirmedQuery = `
-    SELECT users.id, users.full_name, users.course, profiles.modules, profiles.study_location
+    SELECT users.id, users.full_name, users.course, profiles.modules, profiles.study_location, profiles.profile_picture, connections.id AS connection_id
     FROM connections
     JOIN users ON (
       CASE
@@ -111,12 +124,77 @@ const getDashboard = (req, res) => {
   db.query(pendingQuery, [userId], (err, pending) => {
     if (err) return res.status(500).json({ message: "Server error" });
 
-    db.query(confirmedQuery, [userId, userId, userId], (err, confirmed) => {
+    db.query(sentQuery, [userId], (err, sent) => {
       if (err) return res.status(500).json({ message: "Server error" });
 
-      return res.status(200).json({ pending, confirmed });
+      db.query(confirmedQuery, [userId, userId, userId], (err, confirmed) => {
+        if (err) return res.status(500).json({ message: "Server error" });
+
+        return res.status(200).json({ pending, sent, confirmed });
+      });
     });
   });
 };
 
-module.exports = { sendRequest, acceptRequest, declineRequest, getDashboard };
+// Withdraw a sent request
+const withdrawRequest = (req, res) => {
+  const userId = req.session.userId;
+  const connectionId = req.params.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorised. Please log in." });
+  }
+
+  const query =
+    'DELETE FROM connections WHERE id = ? AND sender_id = ? AND status = "pending"';
+  db.query(query, [connectionId, userId], (err, result) => {
+    if (err) return res.status(500).json({ message: "Server error" });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Connection request not found." });
+    }
+
+    return res.status(200).json({ message: "Request withdrawn." });
+  });
+};
+
+// Get connection-based analytics for the logged-in user
+const getAnalytics = (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorised. Please log in." });
+  }
+
+  const confirmedQuery =
+    'SELECT COUNT(*) AS count FROM connections WHERE (sender_id = ? OR receiver_id = ?) AND status = "accepted"';
+  const sentQuery = "SELECT COUNT(*) AS count FROM connections WHERE sender_id = ?";
+  const receivedQuery = "SELECT COUNT(*) AS count FROM connections WHERE receiver_id = ?";
+
+  db.query(confirmedQuery, [userId, userId], (err, confirmedResults) => {
+    if (err) return res.status(500).json({ message: "Server error" });
+
+    db.query(sentQuery, [userId], (err, sentResults) => {
+      if (err) return res.status(500).json({ message: "Server error" });
+
+      db.query(receivedQuery, [userId], (err, receivedResults) => {
+        if (err) return res.status(500).json({ message: "Server error" });
+
+        return res.status(200).json({
+          confirmedBuddies: confirmedResults[0].count,
+          requestsSent: sentResults[0].count,
+          requestsReceived: receivedResults[0].count,
+        });
+      });
+    });
+  });
+};
+
+module.exports = {
+  sendRequest,
+  acceptRequest,
+  declineRequest,
+  getDashboard,
+  withdrawRequest,
+  getAnalytics,
+};

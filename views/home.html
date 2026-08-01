@@ -3,16 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard — StudyBuddy NCI</title>
+    <title>Home — StudyBuddy NCI</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/theme.js"></script>
   </head>
-  <body>
+  <body class="home-page">
     <nav class="navbar">
       <span class="nav-brand">StudyBuddy NCI</span>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation menu">☰</label>
       <div class="nav-links">
-        <a href="/dashboard.html">Dashboard</a>
+        <a href="/home.html" class="active">Home</a>
         <a href="/search.html">Find a Buddy</a>
         <a href="/profile.html">My Profile</a>
+        <a href="/analytics.html">Analytics</a>
         <button id="logout-btn" class="btn-nav">Logout</button>
       </div>
     </nav>
@@ -37,14 +41,26 @@
         <p class="empty-msg">No pending requests.</p>
       </div>
 
+      <h3>Requests You've Sent</h3>
+      <div id="sent-requests">
+        <p class="empty-msg">No sent requests.</p>
+      </div>
+
       <h3>Your Confirmed Study Buddies</h3>
       <div id="confirmed-buddies">
         <p class="empty-msg">
           No confirmed buddies yet. Go find a study buddy!
         </p>
       </div>
+
+      <h3>Upcoming Study Sessions</h3>
+      <div id="upcoming-sessions">
+        <p class="empty-msg">No upcoming study sessions.</p>
+      </div>
     </div>
 
-    <script src="/js/dashboard.js"></script>
+    <script src="/js/home.js"></script>
+    <script src="/js/sessions.js"></script>
+    <script src="/js/session-timer.js"></script>
   </body>
 </html>

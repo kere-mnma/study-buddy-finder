@@ -10,13 +10,15 @@ document.getElementById('register-form').addEventListener('submit', async functi
   const email = document.getElementById('email').value.trim();
   const course = document.getElementById('course').value.trim();
   const password = document.getElementById('password').value;
+  const security_question = document.getElementById('security_question').value;
+  const security_answer = document.getElementById('security_answer').value.trim();
 
   // Hide previous messages
   errorBox.style.display = 'none';
   successBox.style.display = 'none';
 
   // Client side validation
-  if (!full_name || !email || !course || !password) {
+  if (!full_name || !email || !course || !password || !security_question || !security_answer) {
     errorBox.textContent = 'All fields are required.';
     errorBox.style.display = 'block';
     return;
@@ -33,7 +35,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ full_name, email, course, password })
+      body: JSON.stringify({ full_name, email, course, password, security_question, security_answer })
     });
 
     const data = await response.json();

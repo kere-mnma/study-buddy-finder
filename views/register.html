@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register — StudyBuddy NCI</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/theme.js"></script>
   </head>
-  <body>
+  <body class="register-page">
     <div class="form-container">
       <h1>StudyBuddy NCI</h1>
       <h2>Create your account</h2>
@@ -49,6 +50,30 @@
             type="password"
             id="password"
             placeholder="••••••••"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Security Question</label>
+          <select id="security_question" required>
+            <option value="">Select a question</option>
+            <option value="What was the name of your first school?">
+              What was the name of your first school?
+            </option>
+            <option value="What is your mother's maiden name?">
+              What is your mother's maiden name?
+            </option>
+            <option value="What was the name of your first pet?">
+              What was the name of your first pet?
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Security Answer</label>
+          <input
+            type="text"
+            id="security_answer"
+            placeholder="Your answer"
             required
           />
         </div>
