@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Profile — StudyBuddy NCI</title>
     <link rel="stylesheet" href="/css/style.css" />
+    <script src="/js/theme.js"></script>
   </head>
-  <body>
+  <body class="profile-page">
     <nav class="navbar">
       <span class="nav-brand">StudyBuddy NCI</span>
+      <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+      <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle navigation menu">☰</label>
       <div class="nav-links">
-        <a href="/dashboard.html">Dashboard</a>
+        <a href="/home.html">Home</a>
         <a href="/search.html">Find a Buddy</a>
         <a href="/profile.html" class="active">My Profile</a>
+        <a href="/analytics.html">Analytics</a>
         <button id="logout-btn" class="btn-nav">Logout</button>
       </div>
     </nav>
@@ -20,10 +24,24 @@
     <div class="container">
       <h2>My Profile</h2>
 
+      <div class="tab-row">
+        <button id="tab-profile-info" class="tab-btn active">Profile Info</button>
+        <button id="tab-preferences" class="tab-btn">Preferences</button>
+      </div>
+
+      <div id="profile-info-panel">
       <div id="error-message" class="error-box" style="display: none"></div>
       <div id="success-message" class="success-box" style="display: none"></div>
 
       <form id="profile-form">
+        <div class="form-group">
+          <label>Profile Picture</label>
+          <div id="profile-picture-display"></div>
+          <input type="file" id="profile_picture_input" accept="image/png, image/jpeg" />
+          <button type="button" id="upload-picture-btn" class="btn-primary">
+            Upload Picture
+          </button>
+        </div>
         <div class="form-group">
           <label>Full Name</label>
           <input type="text" id="full_name" disabled />
@@ -70,8 +88,85 @@
           Save Profile
         </button>
       </form>
+
+      <div class="danger-zone">
+        <h3>Danger Zone</h3>
+        <p>This will permanently delete your account and cannot be undone.</p>
+        <button id="delete-account-btn" class="btn-danger full-width">
+          Delete My Account
+        </button>
+      </div>
+      </div>
+
+      <div id="preferences-panel" style="display: none">
+      <p>Manage your theme and notification preferences.</p>
+
+      <div id="settings-error-message" class="error-box" style="display: none"></div>
+      <div id="settings-success-message" class="success-box" style="display: none"></div>
+
+      <div class="settings-section">
+        <h3>Theme</h3>
+        <div class="theme-options">
+          <label class="theme-option">
+            <input type="radio" name="theme" value="light" id="theme-light" />
+            Light Mode
+          </label>
+          <label class="theme-option">
+            <input type="radio" name="theme" value="dark" id="theme-dark" />
+            Dark Mode
+          </label>
+          <label class="theme-option">
+            <input type="radio" name="theme" value="system" id="theme-system" />
+            System Default
+          </label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <h3>Notifications</h3>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <div class="toggle-title">Push Notifications</div>
+            <div class="toggle-sub">
+              Receive reminders for upcoming deadlines and events
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="push-notifications" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <div class="toggle-title">Email Notifications</div>
+            <div class="toggle-sub">
+              Receive weekly summaries and important updates
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="email-notifications" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <div class="toggle-title">Sound Effects</div>
+            <div class="toggle-sub">Play sounds for notifications and actions</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="sound-effects" />
+            <span class="switch-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <button id="save-settings-btn" class="btn-primary full-width">
+        Save Settings
+      </button>
+      </div>
     </div>
 
     <script src="/js/profile.js"></script>
+    <script src="/js/session-timer.js"></script>
   </body>
 </html>
