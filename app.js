@@ -4,9 +4,11 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
+const swaggerUi = require("swagger-ui-express");
 
 // Import database connection
 const db = require("./config/db");
+const swaggerSpec = require("./config/swagger");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -37,6 +39,9 @@ app.use(
 
 // Serve HTML files from views folder
 app.use(express.static(path.join(__dirname, "views")));
+
+// API documentation (Swagger UI)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use("/api/auth", authRoutes);
