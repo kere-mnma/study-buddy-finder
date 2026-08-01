@@ -1,3 +1,86 @@
+/* ── DESIGN TOKENS ────────────────────────────────────────────
+   Single source of truth for spacing, radius, shadow and color.
+   Every rule below should pull from these instead of one-off
+   values, so the same control looks identical wherever it's used.
+   html.theme-dark overrides the color tokens; layout tokens
+   (spacing/radius) stay the same in both themes. ─────────────── */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --radius-control: 8px;  /* inputs, tabs, nav button, small pill buttons */
+  --radius-cta: 10px;     /* primary/secondary/danger buttons */
+  --radius-card: 14px;    /* buddy cards, propose-session form, empty states */
+  --radius-panel: 18px;   /* stat boxes, form containers, settings sections */
+
+  --font-sans:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  /* Light theme (default) */
+  --color-bg: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f9f9f9;
+  --color-surface-disabled: #eeeeee;
+  --color-border: #e5e7eb;
+  --color-text: #1a1d29;
+  --color-text-secondary: #5b6272;
+  --color-text-muted: #9ca3af;
+  --color-navbar-bg: #15131f;
+
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-soft-bg: rgba(79, 70, 229, 0.1);
+  --accent-soft-text: #4338ca;
+  --link-color: #4f46e5;
+
+  --shadow-card: 0 1px 6px rgba(0, 0, 0, 0.08);
+  --shadow-cta: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-cta-hover: 0 6px 16px rgba(15, 15, 20, 0.12);
+  --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+html.theme-dark {
+  --color-bg: #0d0d0f;
+  --color-surface: #1a1a1d;
+  --color-surface-sunken: #1a1a1d;
+  --color-surface-disabled: #151517;
+  --color-border: rgba(255, 255, 255, 0.05);
+  --color-text: #f5f5f7;
+  --color-text-secondary: #9a9aa2;
+  --color-text-muted: #6b6b72;
+  --color-navbar-bg: #151517;
+
+  --accent: #6366f1;
+  --accent-hover: #5457d5;
+  --accent-soft-bg: rgba(99, 102, 241, 0.14);
+  --accent-soft-text: #c7c8fa;
+  --link-color: #8b8dfa;
+
+  --shadow-card: none;
+  --shadow-cta: none;
+  --shadow-cta-hover: 0 6px 18px rgba(99, 102, 241, 0.35);
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+/* Elevated "panel" surfaces (form-container, stat-box) get a subtle
+   gradient in dark mode instead of a flat fill, for extra depth. */
+:root {
+  --surface-elevated: var(--color-surface);
+}
+html.theme-dark {
+  --surface-elevated: linear-gradient(180deg, #1e1e22 0%, #1a1a1d 100%);
+}
+
 /* ── RESET & BASE ─────────────────────────────────────────── */
 * {
   margin: 0;
@@ -5,15 +88,26 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: var(--color-bg);
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f6f9;
-  color: #333;
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-size: 16px;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
 }
 
 a {
-  color: #2e75b6;
+  color: var(--link-color);
   text-decoration: none;
 }
 
@@ -21,11 +115,22 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ── NAVBAR ───────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── NAVBAR ─────────────────────────────────────────────────
+   Always styled dark regardless of theme — persistent chrome,
+   same as the buttons/badges tinted with the brand accent below.
+   Mobile-first: stacked hamburger menu by default, restored to a
+   single horizontal row at the tablet breakpoint. ───────────── */
 .navbar {
-  background-color: #1f3864;
-  padding: 14px 24px;
+  background-color: var(--color-navbar-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 14px 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
 }
@@ -36,13 +141,37 @@ a:hover {
   font-weight: bold;
 }
 
+/* Hidden checkbox + label drive a CSS-only hamburger menu (no JS needed) */
+.nav-toggle {
+  display: none;
+}
+
+.nav-toggle-label {
+  display: block;
+  color: #ffffff;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 .nav-links {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  margin-top: 14px;
+  order: 3;
+}
+
+.nav-toggle:checked ~ .nav-links {
   display: flex;
-  gap: 20px;
-  align-items: center;
 }
 
 .nav-links a {
+  display: block;
+  width: 100%;
   color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
 }
@@ -51,83 +180,276 @@ a:hover {
 .nav-links a.active {
   color: #ffffff;
   text-decoration: none;
-  border-bottom: 2px solid #60a5fa;
+  border-bottom: 2px solid var(--accent);
   padding-bottom: 2px;
 }
 
 .btn-nav {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  padding: 6px 14px;
+  background-color: rgba(99, 102, 241, 0.16);
+  color: #c7c8fa;
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: var(--radius-control);
+  padding: 10px 16px;
   font-size: 13px;
   cursor: pointer;
+  width: 100%;
+  transition: background-color 0.15s ease;
 }
 
 .btn-nav:hover {
-  background-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(99, 102, 241, 0.28);
 }
 
-/* ── HERO ─────────────────────────────────────────────────── */
+/* Tablet and up: restore the navbar to a single row. This breakpoint
+   was referenced in comments throughout this file but never actually
+   existed — the nav was stuck in mobile/hamburger mode at every
+   screen size. */
+@media (min-width: 768px) {
+  .nav-toggle-label {
+    display: none;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin-top: 0;
+    gap: var(--space-6);
+    order: 0;
+  }
+
+  .nav-links a {
+    width: auto;
+  }
+
+  .btn-nav {
+    width: auto;
+  }
+}
+
+/* ── HERO (landing page) ──────────────────────────────────────
+   Always dark/rich-toned regardless of site theme — a landing
+   page's hero is conventionally its own visual moment, so it
+   doesn't need to flip with the light/dark toggle the rest of the
+   app respects. ───────────────────────────────────────────────── */
+body.index-page {
+  background-color: #0d0d0f;
+}
+
 .hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  padding: 80px 20px;
-  background-color: #1f3864;
+  padding: var(--space-8) var(--space-5);
+  /* Dark gradient scrim over the photo so text stays readable at full
+     contrast — same gradient tone as before, just semi-transparent. */
+  background-image:
+    linear-gradient(
+      160deg,
+      rgba(13, 13, 15, 0.92) 0%,
+      rgba(21, 19, 31, 0.88) 55%,
+      rgba(28, 26, 51, 0.85) 100%
+    ),
+    url("/images/hero-students-library.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #ffffff;
 }
 
-.hero h1 {
-  font-size: 36px;
-  margin-bottom: 12px;
+.hero-glow {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.35), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
 }
 
-.hero p {
-  font-size: 18px;
-  margin-bottom: 32px;
-  color: rgba(255, 255, 255, 0.85);
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 640px;
+}
+
+.hero h1 {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-3);
+}
+
+.hero-tagline {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: var(--space-3);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.hero-subtext {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+  color: #9a9aa2;
+  max-width: 480px;
 }
 
 .hero-buttons {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: var(--space-4);
   justify-content: center;
+}
+
+.hero-note {
+  font-size: 13px;
+  color: #6b6b72;
+  margin-top: var(--space-4);
+}
+
+.hero-steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-7);
+  margin-top: var(--space-8);
+  padding-top: var(--space-7);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+}
+
+.hero-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 150px;
+}
+
+.hero-step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #a5a6f6;
+}
+
+.hero-step-label {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #9a9aa2;
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .hero-tagline {
+    font-size: 16px;
+  }
+
+  .hero-steps {
+    gap: var(--space-6);
+  }
+
+  .hero-step {
+    width: 45%;
+  }
 }
 
 /* ── BUTTONS ──────────────────────────────────────────────── */
 .btn-primary {
-  background-color: #1f3864;
+  background-color: var(--accent);
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  padding: 10px 22px;
+  border-radius: var(--radius-cta);
+  padding: 12px 22px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
+  box-shadow: var(--shadow-cta);
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
 }
 
 .btn-primary:hover {
-  background-color: #2e75b6;
+  background-color: var(--accent-hover);
   text-decoration: none;
+  box-shadow: var(--shadow-cta-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
   background-color: transparent;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-cta);
+  padding: 12px 22px;
   font-size: 14px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-cta);
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.15s ease;
+}
+
+html.theme-dark .btn-danger {
+  background-color: rgba(248, 113, 113, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+  text-decoration: none;
+}
+
+html.theme-dark .btn-danger:hover {
+  background-color: rgba(248, 113, 113, 0.25);
 }
 
 .full-width {
@@ -136,42 +458,64 @@ a:hover {
   font-size: 15px;
 }
 
-/* ── FORM CONTAINER ───────────────────────────────────────── */
-.form-container {
-  max-width: 440px;
-  margin: 60px auto;
-  background: #ffffff;
-  padding: 36px;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+/* ── FORM CONTAINER (login / register / forgot-password / 404) ──
+   Mobile-first: the body centers the card both ways at every size,
+   so it's no longer pinned to the left edge on wide screens. ──── */
+body.login-page,
+body.register-page,
+body.forgot-password-page,
+body.notfound-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
 }
 
+.form-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border);
+  padding: var(--space-7) var(--space-6);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-card);
+}
+
+/* Small uppercase kicker — the brand name is secondary to the
+   page's actual heading (h2) here, not competing with it. */
 .form-container h1 {
-  font-size: 22px;
-  color: #1f3864;
-  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
 }
 
 .form-container h2 {
-  font-size: 18px;
-  margin-bottom: 6px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
 }
 
 .form-container p {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: var(--space-4);
 }
 
 .form-group label {
   display: block;
   font-size: 13px;
-  color: #555;
-  margin-bottom: 4px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
 }
 
 .form-group input,
@@ -179,24 +523,28 @@ a:hover {
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #f9f9f9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  /* 16px prevents iOS Safari from auto-zooming in when a field is focused */
+  font-size: 16px;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #2e75b6;
-  background-color: #ffffff;
+  border-color: var(--accent);
+  background-color: var(--color-surface);
+  box-shadow: var(--focus-ring);
 }
 
 .form-footer {
   font-size: 13px;
-  color: #666;
-  margin-top: 16px;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-4);
   text-align: center;
 }
 
@@ -204,93 +552,121 @@ a:hover {
 .error-box {
   background-color: #fee2e2;
   color: #991b1b;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   padding: 10px 14px;
   font-size: 13px;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-4);
+}
+
+html.theme-dark .error-box {
+  background-color: rgba(248, 113, 113, 0.14);
+  color: #f87171;
 }
 
 .success-box {
   background-color: #d1fae5;
   color: #065f46;
-  border-radius: 6px;
+  border-radius: var(--radius-control);
   padding: 10px 14px;
   font-size: 13px;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-4);
 }
 
-/* ── CONTAINER ────────────────────────────────────────────── */
+html.theme-dark .success-box {
+  background-color: rgba(52, 211, 153, 0.14);
+  color: #34d399;
+}
+
+/* ── CONTAINER (home / profile / search / analytics) ── */
 .container {
   max-width: 860px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: var(--space-8) auto;
+  padding: 0 var(--space-5);
 }
 
 .container h2 {
-  font-size: 24px;
-  color: #1f3864;
-  margin-bottom: 6px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
 }
 
 .container h3 {
   font-size: 16px;
-  color: #555;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 24px 0 10px;
+  margin: var(--space-6) 0 var(--space-3);
 }
 
-.container p {
+.container > p,
+#preferences-panel > p {
   font-size: 14px;
-  color: #666;
-  margin-bottom: 20px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-5);
 }
 
 /* ── STATS ────────────────────────────────────────────────── */
 .stats-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .stat-box {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  background: var(--surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
 }
 
 .stat-num {
   font-size: 32px;
   font-weight: bold;
-  color: #1f3864;
+  color: var(--accent);
 }
 
 .stat-label {
   font-size: 13px;
-  color: #666;
-  margin-top: 4px;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
 }
 
-/* ── CARDS ────────────────────────────────────────────────── */
+/* stats-row-3 (analytics) is 3-across on tablet+, but stacks to a
+   single column on mobile — three ~90px columns at a 375px viewport
+   left almost no room for the stat numbers. */
+body.analytics-page .stats-row-3 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+  body.analytics-page .stats-row-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ── CARDS (buddy-card family: home requests/buddies, search results, sessions) ── */
 .buddy-card {
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-3);
+  box-shadow: var(--shadow-card);
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-4);
 }
 
 .buddy-avatar {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -299,87 +675,282 @@ a:hover {
   flex-shrink: 0;
 }
 
+.buddy-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+}
+
 .buddy-info {
   flex: 1;
+  min-width: 0;
 }
 
 .buddy-name {
   font-size: 15px;
   font-weight: bold;
-  color: #1f3864;
+  color: var(--color-text);
   margin-bottom: 2px;
 }
 
 .buddy-sub {
   font-size: 13px;
-  color: #666;
+  color: var(--color-text-secondary);
+}
+
+.buddy-last-active {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
 }
 
 .buddy-actions {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
 .btn-accept {
   background-color: #d1fae5;
   color: #065f46;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-control);
   padding: 6px 12px;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+html.theme-dark .btn-accept {
+  background-color: rgba(52, 211, 153, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.btn-accept:hover {
+  background-color: #a7f3d0;
+}
+
+html.theme-dark .btn-accept:hover {
+  background-color: rgba(52, 211, 153, 0.25);
 }
 
 .btn-decline {
   background-color: #fee2e2;
   color: #991b1b;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-control);
   padding: 6px 12px;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+html.theme-dark .btn-decline {
+  background-color: rgba(248, 113, 113, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.btn-decline:hover {
+  background-color: #fecaca;
+}
+
+html.theme-dark .btn-decline:hover {
+  background-color: rgba(248, 113, 113, 0.25);
 }
 
 .btn-send {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background-color: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-control);
   padding: 6px 12px;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-send:hover {
+  background-color: rgba(79, 70, 229, 0.2);
+}
+
+html.theme-dark .btn-send:hover {
+  background-color: rgba(99, 102, 241, 0.25);
 }
 
 .empty-msg {
+  display: block;
   font-size: 14px;
-  color: #999;
-  font-style: italic;
+  color: var(--color-text-muted);
+  font-style: normal;
+  text-align: center;
+  padding: var(--space-7) var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-card);
+}
+
+html.theme-dark .empty-msg {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Mobile: three flex siblings (avatar, info, actions) in one row get
+   tight fast — regroup into a two-row grid instead (avatar+info on
+   top, actions full-width below) without needing any HTML changes. */
+@media (max-width: 480px) {
+  .buddy-card {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: var(--space-4);
+    row-gap: var(--space-3);
+  }
+
+  .buddy-avatar,
+  .buddy-avatar-img {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .buddy-info {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .buddy-actions {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
 }
 
 /* ── SEARCH ───────────────────────────────────────────────── */
 .search-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
 }
 
 .search-row input {
-  flex: 1;
+  flex: 1 1 200px;
   padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
   font-size: 14px;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text);
 }
 
 .search-row select {
   padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
   font-size: 14px;
-  background-color: #f9f9f9;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text);
+}
+
+.search-row input:focus,
+.search-row select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 480px) {
+  .search-row input {
+    flex-basis: 100%;
+  }
+
+  .search-row select,
+  .search-row .btn-primary {
+    flex: 1 1 auto;
+  }
+}
+
+/* ── TABS ─────────────────────────────────────────────────── */
+.tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.tab-btn {
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tab-btn:hover {
+  background-color: var(--accent-soft-bg);
+}
+
+.tab-btn.active {
+  background-color: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  .tab-btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* ── PAGINATION ───────────────────────────────────────────── */
+.pagination-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.btn-page {
+  background-color: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
+  border: none;
+  border-radius: var(--radius-control);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-page:hover {
+  background-color: rgba(79, 70, 229, 0.2);
+}
+
+html.theme-dark .btn-page:hover {
+  background-color: rgba(99, 102, 241, 0.25);
+}
+
+.btn-page:disabled {
+  background-color: var(--color-surface-disabled);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 13px;
+  color: var(--color-text-secondary);
 }
 
 /* ── PROFILE PAGE ─────────────────────────────────────────── */
@@ -388,13 +959,282 @@ a:hover {
 .container .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: #f9f9f9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  /* 16px prevents iOS Safari from auto-zooming in when a field is focused */
+  font-size: 16px;
+  background-color: var(--color-surface-sunken);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.container .form-group input:focus,
+.container .form-group select:focus,
+.container .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background-color: var(--color-surface);
+  box-shadow: var(--focus-ring);
 }
 
 .container .form-group input:disabled {
-  background-color: #eeeeee;
-  color: #888;
+  background-color: var(--color-surface-disabled);
+  color: var(--color-text-muted);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 28px;
+  margin-bottom: var(--space-3);
+}
+
+.profile-avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: var(--space-3);
+  border: 2px solid var(--color-border);
+}
+
+/* Danger Zone — visually walled off from the rest of Profile Info,
+   but reachable without extra navigation (not its own tab). */
+.danger-zone {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid rgba(153, 27, 27, 0.3);
+  background-color: rgba(153, 27, 27, 0.04);
+  border-radius: var(--radius-panel);
+}
+
+.danger-zone h3 {
+  color: #991b1b;
+  text-transform: none;
+  letter-spacing: normal;
+  margin: 0 0 var(--space-2);
+}
+
+.danger-zone p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+html.theme-dark .danger-zone {
+  border-color: rgba(248, 113, 113, 0.3);
+  background-color: rgba(248, 113, 113, 0.06);
+}
+
+html.theme-dark .danger-zone h3 {
+  color: #f87171;
+}
+
+/* ── SESSION WARNING ──────────────────────────────────────── */
+.session-warning-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fee2e2;
+  color: #991b1b;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: bold;
+  z-index: 1000;
+}
+
+/* ── SETTINGS PAGE ────────────────────────────────────────── */
+.settings-section {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-card);
+}
+
+.settings-section h3 {
+  color: var(--color-text);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 var(--space-4);
+}
+
+.theme-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 12px;
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.theme-option:hover {
+  background-color: var(--accent-soft-bg);
+}
+
+.theme-option:has(input:checked) {
+  background-color: var(--accent-soft-bg);
+  color: var(--color-text);
+}
+
+.theme-option input {
+  accent-color: var(--accent);
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.toggle-row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.toggle-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggle-title {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.toggle-sub {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cccccc;
+  transition: 0.2s;
+  border-radius: 24px;
+}
+
+html.theme-dark .switch-slider {
+  background-color: #3a3a3f;
+}
+
+.switch-slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .switch-slider {
+  background-color: var(--accent);
+}
+
+.switch input:checked + .switch-slider::before {
+  transform: translateX(20px);
+}
+
+/* ── HOME PAGE — STUDY SESSIONS (FR12) ────────────────────────
+   Propose Study Session inline form + Upcoming Study Sessions list. */
+.propose-session-form {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
+.propose-session-form .form-group {
+  margin-bottom: var(--space-3);
+}
+
+.propose-session-form .form-group input {
+  background-color: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  padding: 10px 12px;
+  width: 100%;
+  font-size: 16px;
+}
+
+.propose-session-form .form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+/* Tablet+: lay date/time side by side, keep location and the submit
+   button full-width beneath, instead of three stacked fields. */
+@media (min-width: 480px) {
+  .propose-session-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 var(--space-4);
+  }
+
+  .propose-session-form .form-group:nth-child(3),
+  .propose-session-form > button {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── RESPONSIVE: tighten outer spacing on small screens ───────── */
+@media (max-width: 480px) {
+  .container {
+    margin: var(--space-6) auto;
+  }
+
+  .form-container {
+    padding: var(--space-6) var(--space-5);
+  }
 }
