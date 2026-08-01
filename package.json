@@ -2,8 +2,9 @@
   "name": "study-buddy-finder",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "fetch:images": "node scripts/fetch-pexels-images.js"
   },
@@ -25,7 +26,9 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "multer": "^2.2.0",
-    "mysql2": "^3.22.5"
+    "mysql2": "^3.22.5",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "allowScripts": {
     "bcrypt@6.0.0": true
