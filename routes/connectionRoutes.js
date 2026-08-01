@@ -6,6 +6,7 @@ const {
   declineRequest,
   getDashboard,
   withdrawRequest,
+  getAnalytics,
 } = require("../controllers/connectionController");
 
 // Middleware to protect routes
@@ -18,6 +19,9 @@ const isAuthenticated = (req, res, next) => {
 
 // Get dashboard data
 router.get("/dashboard", isAuthenticated, getDashboard);
+
+// Get connection-based analytics
+router.get("/analytics", isAuthenticated, getAnalytics);
 
 // Send a connection request
 router.post("/request", isAuthenticated, sendRequest);

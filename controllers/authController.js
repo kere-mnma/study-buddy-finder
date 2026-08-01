@@ -3,7 +3,12 @@ const db = require('../config/db');
 
 // Register a new user
 const register = (req, res) => {
-  const { full_name, email, course, password, security_question, security_answer } = req.body;
+  const full_name = typeof req.body.full_name === 'string' ? req.body.full_name.trim() : '';
+  const email = typeof req.body.email === 'string' ? req.body.email.trim() : '';
+  const course = typeof req.body.course === 'string' ? req.body.course.trim() : '';
+  const password = typeof req.body.password === 'string' ? req.body.password : '';
+  const security_question = typeof req.body.security_question === 'string' ? req.body.security_question.trim() : '';
+  const security_answer = typeof req.body.security_answer === 'string' ? req.body.security_answer.trim() : '';
 
   // Validate all fields are filled
   if (!full_name || !email || !course || !password || !security_question || !security_answer) {
@@ -52,7 +57,8 @@ const register = (req, res) => {
 
 // Login a user
 const login = (req, res) => {
-  const { email, password } = req.body;
+  const email = typeof req.body.email === 'string' ? req.body.email.trim() : '';
+  const password = typeof req.body.password === 'string' ? req.body.password : '';
 
   // Validate fields
   if (!email || !password) {
@@ -78,11 +84,17 @@ const login = (req, res) => {
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
-      // Create session
-      req.session.userId = user.id;
-      req.session.userName = user.full_name;
+      // Update last active timestamp
+      const updateLastActive = 'UPDATE users SET last_active = NOW() WHERE id = ?';
+      db.query(updateLastActive, [user.id], (err) => {
+        if (err) return res.status(500).json({ message: 'Server error' });
 
-      return res.status(200).json({ message: 'Login successful', name: user.full_name, userId: user.id });
+        // Create session
+        req.session.userId = user.id;
+        req.session.userName = user.full_name;
+
+        return res.status(200).json({ message: 'Login successful', name: user.full_name, userId: user.id });
+      });
     });
   });
 };
@@ -97,7 +109,7 @@ const logout = (req, res) => {
 
 // Look up a user's security question by email
 const getSecurityQuestion = (req, res) => {
-  const { email } = req.body;
+  const email = typeof req.body.email === 'string' ? req.body.email.trim() : '';
 
   // Validate fields
   if (!email) {
@@ -119,7 +131,9 @@ const getSecurityQuestion = (req, res) => {
 
 // Reset a user's password using their security answer
 const resetPassword = (req, res) => {
-  const { email, security_answer, newPassword } = req.body;
+  const email = typeof req.body.email === 'string' ? req.body.email.trim() : '';
+  const security_answer = typeof req.body.security_answer === 'string' ? req.body.security_answer.trim() : '';
+  const newPassword = typeof req.body.newPassword === 'string' ? req.body.newPassword : '';
 
   // Validate fields
   if (!email || !security_answer || !newPassword) {
@@ -166,4 +180,46 @@ const resetPassword = (req, res) => {
   });
 };
 
-module.exports = { register, login, logout, getSecurityQuestion, resetPassword };
+// Deactivate the logged-in user's account
+const deactivateAccount = (req, res) => {
+  const userId = req.session.userId;
+
+  // Check user is logged in
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorised. Please log in.' });
+  }
+
+  // Delete connections where the user is either sender or receiver
+  const deleteConnections = 'DELETE FROM connections WHERE sender_id = ? OR receiver_id = ?';
+  db.query(deleteConnections, [userId, userId], (err) => {
+    if (err) return res.status(500).json({ message: 'Server error' });
+
+    // Delete the user's profile
+    const deleteProfile = 'DELETE FROM profiles WHERE user_id = ?';
+    db.query(deleteProfile, [userId], (err) => {
+      if (err) return res.status(500).json({ message: 'Server error' });
+
+      // Delete the user
+      const deleteUser = 'DELETE FROM users WHERE id = ?';
+      db.query(deleteUser, [userId], (err) => {
+        if (err) return res.status(500).json({ message: 'Server error' });
+
+        // Destroy the session
+        req.session.destroy((err) => {
+          if (err) return res.status(500).json({ message: 'Server error' });
+
+          return res.status(200).json({ message: 'Your account has been deleted.' });
+        });
+      });
+    });
+  });
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+  getSecurityQuestion,
+  resetPassword,
+  deactivateAccount,
+};

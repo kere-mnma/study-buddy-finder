@@ -9,6 +9,10 @@ const sendRequest = (req, res) => {
     return res.status(401).json({ message: "Unauthorised. Please log in." });
   }
 
+  if (!receiverId) {
+    return res.status(400).json({ message: "A receiver is required." });
+  }
+
   // Check for duplicate request
   const checkDuplicate =
     'SELECT * FROM connections WHERE sender_id = ? AND receiver_id = ? AND status = "pending"';
@@ -86,7 +90,7 @@ const getDashboard = (req, res) => {
 
   // Get pending incoming requests
   const pendingQuery = `
-    SELECT connections.id, users.full_name, users.course, profiles.modules
+    SELECT connections.id, users.full_name, users.course, profiles.modules, profiles.profile_picture
     FROM connections
     JOIN users ON connections.sender_id = users.id
     JOIN profiles ON users.id = profiles.user_id
@@ -95,7 +99,7 @@ const getDashboard = (req, res) => {
 
   // Get pending sent requests
   const sentQuery = `
-    SELECT connections.id, users.full_name, users.course, profiles.modules
+    SELECT connections.id, users.full_name, users.course, profiles.modules, profiles.profile_picture
     FROM connections
     JOIN users ON connections.receiver_id = users.id
     JOIN profiles ON users.id = profiles.user_id
@@ -104,7 +108,7 @@ const getDashboard = (req, res) => {
 
   // Get confirmed buddies
   const confirmedQuery = `
-    SELECT users.id, users.full_name, users.course, profiles.modules, profiles.study_location
+    SELECT users.id, users.full_name, users.course, profiles.modules, profiles.study_location, profiles.profile_picture, connections.id AS connection_id
     FROM connections
     JOIN users ON (
       CASE
@@ -154,10 +158,43 @@ const withdrawRequest = (req, res) => {
   });
 };
 
+// Get connection-based analytics for the logged-in user
+const getAnalytics = (req, res) => {
+  const userId = req.session.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorised. Please log in." });
+  }
+
+  const confirmedQuery =
+    'SELECT COUNT(*) AS count FROM connections WHERE (sender_id = ? OR receiver_id = ?) AND status = "accepted"';
+  const sentQuery = "SELECT COUNT(*) AS count FROM connections WHERE sender_id = ?";
+  const receivedQuery = "SELECT COUNT(*) AS count FROM connections WHERE receiver_id = ?";
+
+  db.query(confirmedQuery, [userId, userId], (err, confirmedResults) => {
+    if (err) return res.status(500).json({ message: "Server error" });
+
+    db.query(sentQuery, [userId], (err, sentResults) => {
+      if (err) return res.status(500).json({ message: "Server error" });
+
+      db.query(receivedQuery, [userId], (err, receivedResults) => {
+        if (err) return res.status(500).json({ message: "Server error" });
+
+        return res.status(200).json({
+          confirmedBuddies: confirmedResults[0].count,
+          requestsSent: sentResults[0].count,
+          requestsReceived: receivedResults[0].count,
+        });
+      });
+    });
+  });
+};
+
 module.exports = {
   sendRequest,
   acceptRequest,
   declineRequest,
   getDashboard,
   withdrawRequest,
+  getAnalytics,
 };
