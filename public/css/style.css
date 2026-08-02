@@ -200,10 +200,7 @@ a:hover {
   background-color: rgba(99, 102, 241, 0.28);
 }
 
-/* Tablet and up: restore the navbar to a single row. This breakpoint
-   was referenced in comments throughout this file but never actually
-   existed — the nav was stuck in mobile/hamburger mode at every
-   screen size. */
+/* tablet and up: navbar back to a single row */
 @media (min-width: 768px) {
   .nav-toggle-label {
     display: none;

@@ -1,14 +1,6 @@
-// One-time setup script — NOT called at runtime by the app.
-//
-// Downloads the specific Pexels photos used as static assets on the
-// landing page into public/images/. Re-run this only if those files are
-// ever lost or you want to swap in different photo IDs below.
-//
-// Requires PEXELS_API_KEY in .env (get a free key at
-// https://www.pexels.com/api/). The key is only read from the
-// environment here — never hardcode it in this file.
-//
-// Usage: node scripts/fetch-pexels-images.js
+// One-off script to grab the landing page hero photos from Pexels — not run by the app itself
+// needs PEXELS_API_KEY in .env, get a free key at https://www.pexels.com/api/
+// usage: node scripts/fetch-pexels-images.js
 
 require("dotenv").config();
 const fs = require("fs");
@@ -20,10 +12,7 @@ if (!KEY) {
   process.exit(1);
 }
 
-// Photo IDs picked from a Pexels search across: "students studying
-// together", "students laptop collaboration", "university library",
-// "students group discussion". See public/images/ATTRIBUTION.md for
-// photographer credit.
+// picked from a Pexels search for students studying/collaborating in a library
 const IMAGES = [
   {
     id: 16420473,
