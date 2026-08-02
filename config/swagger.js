@@ -1,8 +1,6 @@
 const swaggerJsdoc = require("swagger-jsdoc");
 
-// Swagger/OpenAPI configuration — reads the @swagger JSDoc comments
-// above each route definition in routes/*.js and builds the spec
-// served at /api-docs.
+// builds the OpenAPI spec from the @swagger comments in routes/*.js, served at /api-docs
 const options = {
   definition: {
     openapi: "3.0.0",

@@ -43,6 +43,9 @@ app.use(express.static(path.join(__dirname, "views")));
 // API documentation (Swagger UI)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Raw OpenAPI JSON spec — for importing into Postman/Insomnia/etc.
+app.get("/api-docs.json", (req, res) => res.json(swaggerSpec));
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
@@ -60,11 +63,7 @@ app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
 });
 
-// Global error handler — final safety net. Without this, an uncaught
-// exception in a route (e.g. a thrown error from a database driver)
-// falls through to Express's default handler, which returns an HTML
-// page instead of the JSON { message } shape every API route uses,
-// and can leak internal error details to the client.
+// catch-all error handler so we always send back JSON instead of an HTML error page
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ message: "Something went wrong. Please try again." });
