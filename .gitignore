@@ -1,2 +1,6 @@
 node_modules/
 .env
+
+# k6 generated output — not source
+k6/report.html
+k6/summary.json

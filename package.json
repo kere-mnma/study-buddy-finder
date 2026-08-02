@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "fetch:images": "node scripts/fetch-pexels-images.js"
+    "fetch:images": "node scripts/fetch-pexels-images.js",
+    "bench:smoke": "k6 run k6/smoke.js",
+    "bench": "k6 run k6/load.js",
+    "bench:stress": "k6 run k6/stress.js",
+    "bench:spike": "k6 run k6/spike.js",
+    "bench:dash": "k6 run --out web-dashboard k6/load.js",
+    "bench:report": "k6 run --out web-dashboard=export=k6/report.html k6/load.js"
   },
   "repository": {
     "type": "git",
